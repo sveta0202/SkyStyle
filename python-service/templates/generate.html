@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Создать образ | Sky Style</title>
+     <link rel="stylesheet" href="styles/generate.css">
+</head>
+<body>
+
+<header class="header">
+     <a href="home.html" class="logo">
+          <div class="logo-icon">S</div>
+          <span>Sky<span>Style</span></span>
+     </a>
+
+     <nav class="nav">
+          <a href="home.html">главная</a>
+          <a href="profile.html">профиль</a>
+          <a href="outfits.html">мои образы</a>
+          <a href="generate.html" class="active">создать образ</a>
+     </nav>
+
+</header>
+
+<main class="page">
+
+     <section class="generator-panel">
+          <p class="eyebrow">новый лук</p>
+          <h1>Создать образ</h1>
+
+          <div class="choice-block">
+               <h2> Цель аутфита</h2>
+
+               <div class="choice-grid" id="goalButtons">
+                    <button class="choice-btn active" data-value="праздник">на праздник</button>
+                    <button class="choice-btn" data-value="улица">на улицу</button>
+                    <button class="choice-btn" data-value="дом">домашний</button>
+                    <button class="choice-btn" data-value="учеба">на учебу</button>
+                    <button class="choice-btn" data-value="офис">в офис</button>
+                    <button class="choice-btn" data-value="театр">в театр</button>
+               </div>
+          </div>
+
+          <div class="choice-block">
+               <h2> Тона</h2>
+
+               <div class="choice-grid tones" id="toneButtons">
+                    <button class="choice-btn active" data-value="теплые">теплые</button>
+                    <button class="choice-btn" data-value="холодные">холодные</button>
+                    <button class="choice-btn" data-value="яркие">яркие</button>
+                    <button class="choice-btn" data-value="смешанные">смешанные</button>
+               </div>
+          </div>
+
+          <button class="generate-btn" id="generateBtn">сгенерировать образы</button>
+     </section>
+
+     <section class="result-panel">
+          <div class="result-header">
+               <div>
+                    <p class="eyebrow">результат</p>
+
+               </div>
+
+               <span class="weather-pill">+18° · облачно</span>
+          </div>
+
+          <div class="result-grid" id="resultGrid">
+               <div class="empty-result">
+                    <div class="empty-icon">✨</div>
+                    <h3>Пока образ не создан</h3>
+                    <p>Выберите цель и тона, затем нажмите кнопку генерации.</p>
+               </div>
+          </div>
+     </section>
+
+</main>
+</body>
+</html>
