@@ -6,33 +6,41 @@ from flask import Flask, jsonify, render_template, request
 app = Flask(__name__)
 RUST_SERVICE_URL = os.environ.get("RUST_SERVICE_URL", "http://rust-service:8080")
 
+
 @app.get("/")
 def index():
     return render_template("index.html")
+
 
 @app.get("/auth")
 def auth():
     return render_template("login.html")
 
+
 @app.get("/home")
 def home():
     return render_template("home.html", weather=None, outfits=[])
+
 
 @app.get("/reg")
 def reg():
     return render_template("registr.html")
 
-@app.get("/outfits")
-def outfits():
+
+@app.get("/outfits-page")
+def outfits_page():
     return render_template("outfits.html")
+
 
 @app.get("/generate")
 def generate():
     return render_template("generate.html")
 
+
 @app.get("/profile")
 def profile():
     return render_template("profile.html")
+
 
 @app.post("/collect-registration")
 def collect_registration():
@@ -54,8 +62,13 @@ def collect_registration():
     except requests.RequestException as e:
         return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
 
+    try:
+        body = resp.json()
+    except ValueError:
+        body = {"error": resp.text}
+
     if resp.status_code >= 400:
-        err = resp.json().get("error", "ошибка регистрации")
+        err = body.get("error", "ошибка регистрации")
         return jsonify({"ok": False, "error": err}), resp.status_code
 
     return jsonify({
@@ -86,11 +99,15 @@ def login():
     except requests.RequestException as e:
         return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
 
+    try:
+        body = resp.json()
+    except ValueError:
+        body = {"error": resp.text}
+
     if resp.status_code >= 400:
-        err = resp.json().get("error", "ошибка входа")
+        err = body.get("error", "ошибка входа")
         return jsonify({"ok": False, "error": err}), resp.status_code
 
-    body = resp.json()
     return jsonify({
         "ok": True,
         "user": {
@@ -102,7 +119,6 @@ def login():
 
 
 def _proxy(method, path, *, json_body=None, params=None):
-    """Перекидывает запрос в Rust-микросервис и возвращает его JSON-ответ."""
     try:
         resp = requests.request(
             method,
@@ -113,10 +129,12 @@ def _proxy(method, path, *, json_body=None, params=None):
         )
     except requests.RequestException as e:
         return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
+
     try:
         payload = resp.json()
     except ValueError:
         payload = {"error": resp.text}
+
     return jsonify(payload), resp.status_code
 
 
@@ -145,7 +163,7 @@ def weather():
 
 
 @app.get("/outfits")
-def outfits_get():
+def outfits_api():
     user_id = request.args.get("user_id", "").strip()
     return _proxy("GET", "/outfits", params={"user_id": user_id})
 

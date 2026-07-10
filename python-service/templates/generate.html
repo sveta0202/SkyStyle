@@ -9,7 +9,7 @@
 <body>
 
 <header class="header">
-     <a href="home.html" class="logo">
+     <a href="{{ url_for('home') }}" class="logo">
           <div class="logo-icon">S</div>
           <span>Sky<span>Style</span></span>
      </a>
@@ -17,10 +17,9 @@
      <nav class="nav">
           <a href="{{ url_for('home') }}">главная</a>
           <a href="{{ url_for('profile') }}">профиль</a>
-          <a href="{{ url_for('outfits') }}">мои образы</a>
-          <a href="generate.html" class="active">создать образ</a>
+          <a href="{{ url_for('outfits_page') }}">мои образы</a>
+          <a href="{{ url_for('generate') }}" class="active">создать образ</a>
      </nav>
-
 </header>
 
 <main class="page">
@@ -30,21 +29,19 @@
           <h1>Создать образ</h1>
 
           <div class="choice-block">
-               <h2> Цель аутфита</h2>
-
+               <h2>Цель аутфита</h2>
                <div class="choice-grid" id="goalButtons">
-                    <button class="choice-btn active" data-value="праздник">на праздник</button>
-                    <button class="choice-btn" data-value="улица">на улицу</button>
-                    <button class="choice-btn" data-value="дом">домашний</button>
-                    <button class="choice-btn" data-value="учеба">на учебу</button>
-                    <button class="choice-btn" data-value="офис">в офис</button>
-                    <button class="choice-btn" data-value="театр">в театр</button>
+                    <button class="choice-btn active" data-value="на праздник">на праздник</button>
+                    <button class="choice-btn" data-value="на улицу">на улицу</button>
+                    <button class="choice-btn" data-value="домашний">домашний</button>
+                    <button class="choice-btn" data-value="на учебу">на учебу</button>
+                    <button class="choice-btn" data-value="в офис">в офис</button>
+                    <button class="choice-btn" data-value="в театр">в театр</button>
                </div>
           </div>
 
           <div class="choice-block">
-               <h2> Тона</h2>
-
+               <h2>Тона</h2>
                <div class="choice-grid tones" id="toneButtons">
                     <button class="choice-btn active" data-value="теплые">теплые</button>
                     <button class="choice-btn" data-value="холодные">холодные</button>
@@ -60,10 +57,8 @@
           <div class="result-header">
                <div>
                     <p class="eyebrow">результат</p>
-
                </div>
-
-               <span class="weather-pill">+18° · облачно</span>
+               <span class="weather-pill" id="statusPill">готов к генерации</span>
           </div>
 
           <div class="result-grid" id="resultGrid">
@@ -76,5 +71,101 @@
      </section>
 
 </main>
+
+<script>
+     let selectedGoal = "на праздник";
+     let selectedTone = "теплые";
+
+     function bindToggle(groupId, setter) {
+          const group = document.getElementById(groupId);
+          const buttons = group.querySelectorAll(".choice-btn");
+
+          buttons.forEach((btn) => {
+               btn.addEventListener("click", () => {
+                    buttons.forEach((b) => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    setter(btn.dataset.value);
+               });
+          });
+     }
+
+     bindToggle("goalButtons", (value) => selectedGoal = value);
+     bindToggle("toneButtons", (value) => selectedTone = value);
+
+     document.getElementById("generateBtn").addEventListener("click", async () => {
+          const resultGrid = document.getElementById("resultGrid");
+          const statusPill = document.getElementById("statusPill");
+
+          statusPill.textContent = "генерация...";
+          resultGrid.innerHTML = `
+               <div class="empty-result">
+                    <div class="empty-icon">⏳</div>
+                    <h3>Генерируем образ</h3>
+                    <p>Подбираем стиль и создаем изображение.</p>
+               </div>
+          `;
+
+          try {
+               const response = await fetch("/api/generate-outfit-image", {
+                    method: "POST",
+                    headers: {
+                         "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                         goal: selectedGoal,
+                         tone: selectedTone
+                    })
+               });
+
+               const data = await response.json();
+
+               if (!data.ok) {
+                    statusPill.textContent = "ошибка";
+                    resultGrid.innerHTML = `
+                         <div class="empty-result">
+                              <div class="empty-icon">⚠️</div>
+                              <h3>Не удалось создать образ</h3>
+                              <p>${data.error || "Попробуйте еще раз."}</p>
+                         </div>
+                    `;
+                    return;
+               }
+
+               statusPill.textContent = `${selectedGoal} · ${selectedTone}`;
+
+               const listHtml = data.items.map(item => `<li>${item}</li>`).join("");
+
+               resultGrid.innerHTML = `
+                    <article class="outfit-result" style="grid-column: 1 / -1;">
+                         <div class="result-top">
+                              <span class="result-tag">${selectedTone}</span>
+                              <span class="save-mark">★</span>
+                         </div>
+                         <h3>${data.title}</h3>
+                         <div style="border-radius: 24px; overflow: hidden; margin-bottom: 18px;">
+                              <img
+                                   src="data:image/png;base64,${data.image_base64}"
+                                   alt="Сгенерированный образ"
+                                   style="width:100%; display:block;"
+                              >
+                         </div>
+                         <ul class="outfit-list">
+                              ${listHtml}
+                         </ul>
+                    </article>
+               `;
+          } catch (e) {
+               statusPill.textContent = "ошибка";
+               resultGrid.innerHTML = `
+                    <div class="empty-result">
+                         <div class="empty-icon">⚠️</div>
+                         <h3>Ошибка соединения</h3>
+                         <p>${e.message}</p>
+                    </div>
+               `;
+          }
+     });
+</script>
+
 </body>
 </html>
