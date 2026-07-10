@@ -5,6 +5,44 @@
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>Главная | Sky Style</title>
      <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+     <style>
+          .weather-search{
+               display: flex;
+               gap: 10px;
+               margin-top: 22px;
+          }
+          .weather-search input{
+               flex: 1;
+               min-width: 0;
+               padding: 12px 14px;
+               border-radius: 18px;
+               border: 1px solid rgba(139,184,255,.6);
+               background: rgba(255,255,255,.85);
+               font-family: inherit;
+               font-size: 16px;
+               color: #263A73;
+               outline: none;
+          }
+          .weather-search input:focus{
+               border-color: #5B7CFA;
+               box-shadow: 0 0 0 4px rgba(91,124,250,.18);
+          }
+          .weather-search button{
+               border: none;
+               padding: 0 22px;
+               border-radius: 18px;
+               color: white;
+               font-size: 16px;
+               font-weight: 900;
+               cursor: pointer;
+               background: linear-gradient(135deg, #5B7CFA, #8BB8FF);
+               box-shadow: 0 12px 26px rgba(91,124,250,.25);
+               transition: .25s;
+          }
+          .weather-search button:hover{
+               transform: translateY(-2px);
+          }
+     </style>
 </head>
 <body>
 
@@ -24,75 +62,39 @@
 
 <main class="page">
 
-     <aside class="weather-card">
+     <aside class="weather-card" id="weather-card">
           <div class="weather-header">
                <div>
                     <p class="weather-label">Сегодня</p>
-                    {% if weather %}
-                         <h2>{{ weather.city }}</h2>
-                    {% else %}
-                         <h2>Город не указан</h2>
-                    {% endif %}
+                    <h2 id="w-city">Город не указан</h2>
                </div>
 
-               <div class="weather-icon">
-                    {% if weather %}
-                         <img src="{{ weather.icon_url }}" alt="{{ weather.description }}" width="64" height="64">
-                    {% else %}
-                         ☁️
-                    {% endif %}
+               <div class="weather-icon" id="w-icon">☁️</div>
+          </div>
+
+          <div class="temperature" id="w-temp">--°</div>
+
+          <div class="weather-tags">
+               <span id="w-feels">ощущается --°</span>
+               <span id="w-desc">нет данных</span>
+          </div>
+
+          <div class="weather-details">
+               <div>
+                    <strong id="w-wind">--</strong>
+                    <p>ветер</p>
+               </div>
+
+               <div>
+                    <strong id="w-hum">--</strong>
+                    <p>влажность</p>
                </div>
           </div>
 
-          {% if weather %}
-               <div class="temperature">{{ weather.temp }}°</div>
-
-               <div class="weather-tags">
-                    <span>ощущается {{ weather.feels_like }}°</span>
-                    <span>{{ weather.description }}</span>
-               </div>
-
-               <div class="weather-details">
-                    <div>
-                         <strong>{{ weather.wind }} м/с</strong>
-                         <p>ветер</p>
-                    </div>
-
-                    <div>
-                         <strong>{{ weather.humidity }}%</strong>
-                         <p>влажность</p>
-                    </div>
-
-                    <div>
-                         <strong>{{ weather.country }}</strong>
-                         <p>страна</p>
-                    </div>
-               </div>
-          {% else %}
-               <div class="temperature">--°</div>
-
-               <div class="weather-tags">
-                    <span>ощущается --°</span>
-                    <span>нет данных</span>
-               </div>
-
-               <div class="weather-details">
-                    <div>
-                         <strong>--</strong>
-                         <p>ветер</p>
-                    </div>
-
-                    <div>
-                         <strong>--</strong>
-                         <p>влажность</p>
-                    </div>
-
-                    <div>
-                         <strong>--</strong>
-                         <p>страна</p>
-                    </div>
-               </div>
-          {% endif %}
+          <div class="weather-search">
+               <input type="text" id="w-city-input" placeholder="Ваш город">
+               <button type="button" id="w-city-btn">Ок</button>
+          </div>
      </aside>
 
      <section class="guide">
@@ -121,7 +123,7 @@
                     <div class="step-number">03</div>
                     <div>
                          <h3>Создайте новый образ</h3>
-                         <p>Выберите цель выхода: прогулка, учеба, офис, театр или дождливая погода — и получите сочетание вещей.</p>
+                         <p>Выберите город и нажмите «Подобрать образ» в профиле — нейросеть соберёт сочетание вещей под погоду.</p>
                     </div>
                </article>
 
@@ -129,12 +131,104 @@
                     <div class="step-number">04</div>
                     <div>
                          <h3>Сохраняйте лучшие луки</h3>
-                         <p>Готовые образы можно хранить в разделе «Мои образы» и быстро возвращать��я к ним позже.</p>
+                         <p>Готовые образы сохраняются и показываются здесь, в разделе «Мои образы».</p>
                     </div>
                </article>
           </div>
      </section>
+
+     <section class="history-section">
+          <div class="section-head">
+               <h2>Мои образы</h2>
+          </div>
+
+          <div class="outfits-grid" id="outfits-grid">
+               <p>Загрузка…</p>
+          </div>
+     </section>
 </main>
+
+<script>
+    const uid = localStorage.getItem("user_id");
+    let city = localStorage.getItem("city") || "";
+    const cityInput = document.getElementById("w-city-input");
+    const cityBtn = document.getElementById("w-city-btn");
+    if (cityInput && city) cityInput.value = city;
+
+    function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => (
+            { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+        ));
+    }
+
+    async function loadWeather() {
+        if (cityInput && cityInput.value.trim()) city = cityInput.value.trim();
+        if (!city) {
+            setText("w-city", "Город не указан");
+            setText("w-desc", "укажите город в профиле");
+            return;
+        }
+        try {
+            const r = await fetch("/weather?city=" + encodeURIComponent(city));
+            const w = await r.json();
+            if (w.error) {
+                setText("w-city", "Ошибка погоды");
+                setText("w-desc", w.error);
+                return;
+            }
+            setText("w-city", w.city);
+            document.getElementById("w-icon").innerHTML = w.icon
+                ? '<img src="https://openweathermap.org/img/wn/' + w.icon + '@2x.png" alt="' + escapeHtml(w.description) + '" width="64" height="64">'
+                : "☀️";
+            setText("w-temp", Math.round(w.temp) + "°");
+            setText("w-feels", "ощущается " + Math.round(w.feels_like) + "°");
+            setText("w-desc", w.description);
+            setText("w-wind", w.wind + " м/с");
+            setText("w-hum", w.humidity + "%");
+        } catch (e) {
+            setText("w-desc", "сетевая ошибка");
+        }
+    }
+
+    async function loadOutfits() {
+        const grid = document.getElementById("outfits-grid");
+        if (!uid) {
+            grid.innerHTML = "<p>Войдите в аккаунт, чтобы видеть свои образы.</p>";
+            return;
+        }
+        try {
+            const r = await fetch("/outfits?user_id=" + encodeURIComponent(uid));
+            const data = await r.json();
+            const list = data.outfits || [];
+            if (!list.length) {
+                grid.innerHTML = "<p>Пока нет образов. Зайдите в профиль и нажмите «Подобрать образ».</p>";
+                return;
+            }
+            grid.innerHTML = list.map(o =>
+                '<div class="outfit-card"><h3>' + escapeHtml(o.title) +
+                '</h3><p>' + escapeHtml(o.description) + "</p></div>"
+            ).join("");
+        } catch (e) {
+            grid.innerHTML = "<p>Не удалось загрузить образы.</p>";
+        }
+    }
+
+    async function applyCity() {
+        city = (cityInput.value || "").trim();
+        localStorage.setItem("city", city);
+        await loadWeather();
+    }
+    if (cityBtn) cityBtn.addEventListener("click", applyCity);
+    if (cityInput) cityInput.addEventListener("keydown", e => { if (e.key === "Enter") applyCity(); });
+
+    loadWeather();
+    loadOutfits();
+</script>
 
 </body>
 </html>

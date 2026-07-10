@@ -70,6 +70,8 @@
                 });
                 const data = await r.json();
                 if (data.ok) {
+                    localStorage.setItem("user_id", data.user.id);
+                    localStorage.setItem("user_email", data.user.email);
                     alert("Зарегистрировано: " + data.user.user_name);
                     window.location.href = "/auth";
                 } else {

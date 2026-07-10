@@ -16,7 +16,6 @@ def auth():
 
 @app.get("/home")
 def home():
-    """Личный кабинет — открывается после успешного входа."""
     return render_template("home.html", weather=None, outfits=[])
 
 @app.get("/reg")
@@ -33,7 +32,6 @@ def generate():
 
 @app.get("/profile")
 def profile():
-    """Страница профиля пользователя."""
     return render_template("profile.html")
 
 @app.post("/collect-registration")
@@ -101,6 +99,61 @@ def login():
             "id": str(body.get("id")),
         },
     })
+
+
+def _proxy(method, path, *, json_body=None, params=None):
+    """Перекидывает запрос в Rust-микросервис и возвращает его JSON-ответ."""
+    try:
+        resp = requests.request(
+            method,
+            f"{RUST_SERVICE_URL}{path}",
+            json=json_body,
+            params=params,
+            timeout=30,
+        )
+    except requests.RequestException as e:
+        return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
+    try:
+        payload = resp.json()
+    except ValueError:
+        payload = {"error": resp.text}
+    return jsonify(payload), resp.status_code
+
+
+@app.get("/wardrobe")
+def wardrobe_get():
+    user_id = request.args.get("user_id", "").strip()
+    return _proxy("GET", "/wardrobe", params={"user_id": user_id})
+
+
+@app.post("/wardrobe")
+def wardrobe_post():
+    data = request.get_json(silent=True) or {}
+    return _proxy("POST", "/wardrobe", json_body=data)
+
+
+@app.delete("/wardrobe")
+def wardrobe_delete():
+    data = request.get_json(silent=True) or {}
+    return _proxy("DELETE", "/wardrobe", json_body=data)
+
+
+@app.get("/weather")
+def weather():
+    city = request.args.get("city", "").strip()
+    return _proxy("GET", "/weather", params={"city": city})
+
+
+@app.get("/outfits")
+def outfits_get():
+    user_id = request.args.get("user_id", "").strip()
+    return _proxy("GET", "/outfits", params={"user_id": user_id})
+
+
+@app.post("/generate-outfit")
+def generate_outfit():
+    data = request.get_json(silent=True) or {}
+    return _proxy("POST", "/outfits/generate", json_body=data)
 
 
 if __name__ == "__main__":

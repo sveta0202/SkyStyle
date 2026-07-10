@@ -27,6 +27,11 @@ services:
       # Внутри сети Docker хост — это имя сервиса "postgres"
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/sky_style
       RUST_LOG: info
+      # Ключи внешних API (интерполируются из корневого .env)
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_BASE_URL: ${LLM_BASE_URL}
+      LLM_MODEL: ${LLM_MODEL}
     ports:
       - "8080:8080"
 

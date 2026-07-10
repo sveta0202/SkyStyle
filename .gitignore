@@ -1,0 +1,13 @@
+# Secrets — никогда не коммитим ключи API
+.env
+rust-service/.env
+
+# IDE / OS
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+
+# Rust build artifacts
+target/
