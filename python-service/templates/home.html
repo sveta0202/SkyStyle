@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyStyle Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <h1>Home</h1>
+            <p>Подбор аутфита с учетом погоды</p>
+        </div>
+
+        <div class="weather-box">
+            {% if weather %}
+                <div class="weather-main">
+                    <img src="{{ weather.icon_url }}" alt="{{ weather.description }}">
+                    <div>
+                        <h3>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h3>
+                        <p>{{ weather.description }}</p>
+                    </div>
+                </div>
+
+                <div class="weather-details">
+                    <span>{{ weather.temp }}°C</span>
+                    <span>Ощущается как: {{ weather.feels_like }}°C</span>
+                    <span>Влажность: {{ weather.humidity }}%</span>
+                    <span>Ветер: {{ weather.wind }} м/с</span>
+                </div>
+            {% else %}
+                <h3>Погода недоступна</h3>
+                <p>Проверь API key OpenWeather и город пользователя.</p>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="actions">
+            <a class="action-card" href="/add-outfit">
+                <h2>Добавить аутфит</h2>
+                <p>Выбери цель, тон и сгенерируй новые комбинации.</p>
+            </a>
+
+            <a class="action-card" href="/profile">
+                <h2>Кабинет пользователя</h2>
+                <p>Укажи город, добавь одежду и управляй профилем.</p>
+            </a>
+        </section>
+
+        <section class="history-section">
+            <div class="section-head">
+                <h2>Мои аутфиты</h2>
+            </div>
+
+            <div class="outfits-grid">
+                {% for outfit in outfits %}
+                    <div class="outfit-card">
+                        <h3>{{ outfit.title }}</h3>
+                        <p>{{ outfit.desc }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
