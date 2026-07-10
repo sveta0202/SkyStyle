@@ -1,68 +1,107 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyStyle Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Главная | Sky Style</title>
+     <link rel="stylesheet" href="styles/home.css">
 </head>
 <body>
-    <header class="topbar">
-        <div class="topbar-left">
-            <h1>Home</h1>
-            <p>Подбор аутфита с учетом погоды</p>
-        </div>
 
-        <div class="weather-box">
-            {% if weather %}
-                <div class="weather-main">
-                    <img src="{{ weather.icon_url }}" alt="{{ weather.description }}">
+<header class="header">
+     <a href="home.html" class="logo">
+          <div class="logo-icon">S</div>
+          <span>Sky<span>Style</span></span>
+     </a>
+
+     <nav class="nav">
+          <a href="home.html" class="active">главная</a>
+          <a href="profile.html">профиль</a>
+          <a href="outfits.html">мои образы</a>
+          <a href="generate.html">создать образ</a>
+     </nav>
+
+</header>
+
+<main class="page">
+
+     <aside class="weather-card">
+          <div class="weather-header">
+               <div>
+                    <p class="weather-label">Сегодня</p>
+                    <h2>Москва</h2>
+               </div>
+
+               <div class="weather-icon">☁️</div>
+          </div>
+
+          <div class="temperature">+18°</div>
+
+          <div class="weather-tags">
+               <span>ощущается +16°</span>
+               <span>дождь 30%</span>
+          </div>
+
+          <div class="weather-details">
+               <div>
+                    <strong>10 км/ч</strong>
+                    <p>ветер</p>
+               </div>
+
+               <div>
+                    <strong>70%</strong>
+                    <p>влажность</p>
+               </div>
+
+               <div>
+                    <strong>1015</strong>
+                    <p>гПа</p>
+               </div>
+          </div>
+
+
+     </aside>
+
+     <section class="guide">
+          <div class="guide-hero">
+               <h1>Как пользоваться Sky Style</h1>
+          </div>
+
+          <div class="steps">
+               <article class="step-card">
+                    <div class="step-number">01</div>
                     <div>
-                        <h3>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h3>
-                        <p>{{ weather.description }}</p>
+                         <h3>Заполните профиль</h3>
+                         <p>Укажите город, чтобы сервис понимал текущую погоду, и добавьте базовую информацию о себе.</p>
                     </div>
-                </div>
+               </article>
 
-                <div class="weather-details">
-                    <span>{{ weather.temp }}°C</span>
-                    <span>Ощущается как: {{ weather.feels_like }}°C</span>
-                    <span>Влажность: {{ weather.humidity }}%</span>
-                    <span>Ветер: {{ weather.wind }} м/с</span>
-                </div>
-            {% else %}
-                <h3>Погода недоступна</h3>
-                <p>Проверь API key OpenWeather и город пользователя.</p>
-            {% endif %}
-        </div>
-    </header>
-
-    <main class="container">
-        <section class="actions">
-            <a class="action-card" href="/add-outfit">
-                <h2>Добавить аутфит</h2>
-                <p>Выбери цель, тон и сгенерируй новые комбинации.</p>
-            </a>
-
-            <a class="action-card" href="/profile">
-                <h2>Кабинет пользователя</h2>
-                <p>Укажи город, добавь одежду и управляй профилем.</p>
-            </a>
-        </section>
-
-        <section class="history-section">
-            <div class="section-head">
-                <h2>Мои аутфиты</h2>
-            </div>
-
-            <div class="outfits-grid">
-                {% for outfit in outfits %}
-                    <div class="outfit-card">
-                        <h3>{{ outfit.title }}</h3>
-                        <p>{{ outfit.desc }}</p>
+               <article class="step-card">
+                    <div class="step-number">02</div>
+                    <div>
+                         <h3>Добавьте гардероб</h3>
+                         <p>Напишите вещи, которые есть у вас в шкафу: верх, низ, обувь, аксессуары и сезонные вещи.</p>
                     </div>
-                {% endfor %}
-            </div>
-        </section>
-    </main>
+               </article>
+
+               <article class="step-card">
+                    <div class="step-number">03</div>
+                    <div>
+                         <h3>Создайте новый образ</h3>
+                         <p>Выберите цель выхода: прогулка, учеба, офис, театр или дождливая погода — и получите сочетание вещей.</p>
+                    </div>
+               </article>
+
+               <article class="step-card">
+                    <div class="step-number">04</div>
+                    <div>
+                         <h3>Сохраняйте лучшие луки</h3>
+                         <p>Готовые образы можно хранить в разделе «Мои образы» и быстро возвращаться к ним позже.</p>
+                    </div>
+               </article>
+          </div>
+     </section>
+</main>
+
 </body>
 </html>
