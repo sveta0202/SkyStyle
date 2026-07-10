@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Профиль | Sky Style</title>
+     <link rel="stylesheet" href="styles/profile.css">
+</head>
+<body>
+
+<header class="header">
+     <a href="#" class="logo">
+          <div class="logo-icon">S</div>
+          <span>Sky<span>Style</span></span>
+     </a>
+
+     <nav class="nav">
+          <a href="home.html">главная</a>
+          <a href="profile.html" class="active">профиль</a>
+          <a href="outfits.html">мои образы</a>
+          <a href="generate.html">создать образ</a>
+     </nav>
+</header>
+
+<main class="page">
+
+     <section class="profile-area">
+          <div class="profile-title">
+               <h1>Ваш профиль</h1>
+               <p>Добавьте город и вещи из гардероба, чтобы Sky Style мог подбирать образы под погоду, настроение и цель выхода.</p>
+          </div>
+
+          <div class="profile-card">
+               <form>
+                    <div class="avatar-block">
+                         <div class="avatar">SS</div>
+
+                         <div class="avatar-info">
+                              <button type="button">Выбрать фото</button>
+                              <p>JPG, GIF или PNG. Максимальный размер 2MB</p>
+                         </div>
+                    </div>
+
+                    <div class="form-grid">
+                         <div class="field">
+                              <label for="first-name">Имя</label>
+                              <input type="text" id="first-name" value="Jowko">
+                         </div>
+
+                         <div class="field">
+                              <label for="last-name">Фамилия</label>
+                              <input type="text" id="last-name" value="Oui">
+                         </div>
+
+                         <div class="field full">
+                              <label for="clothes">Ваш гардероб</label>
+                              <textarea id="clothes" placeholder="Например: голубая рубашка, белая футболка, черные джинсы, тренч, кроссовки..."></textarea>
+                         </div>
+
+                         <div class="field">
+                              <label for="city">Город для прогноза погоды</label>
+                              <input type="text" id="city" placeholder="Например: Москва">
+                         </div>
+                    </div>
+
+                    <div class="actions">
+                         <button type="button" class="btn cancel">Отменить</button>
+                         <button type="submit" class="btn save">Сохранить</button>
+                    </div>
+               </form>
+          </div>
+     </section>
+
+     <aside class="decor-area">
+          <div class="decor-circle circle-one"></div>
+          <div class="decor-circle circle-two"></div>
+          <div class="decor-circle circle-three"></div>
+
+          <div class="decor-text">
+               <h2>Sky Style</h2>
+               <p>Гардероб, погода и стиль — в одном профиле.</p>
+          </div>
+     </aside>
+
+</main>
+
+</body>
+</html>
