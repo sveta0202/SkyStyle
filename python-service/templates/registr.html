@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>регистрация</title>
-     <link rel="stylesheet" href="styles/registr.css">
+     <title>Регистрация</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/registr.css') }}">
 </head>
 <body>
      <header class="logo">
-          <img src="images/logo.png" class="logoImage">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" class="logoImage" alt="SkyStyle logo">
           <span>SkyStyle</span>
      </header>
 
@@ -37,11 +37,10 @@
           </label>
 
           <button class="registrButton">зарегистрироваться</button>
-          
+
           <div class="login">
-               <p>Уже есть аккаунт? <span>Войти</span> </p>
+               <p>Уже есть аккаунт? <a href="{{ url_for('auth') }}">Войти</a></p>
           </div>
      </div>
-
 </body>
 </html>

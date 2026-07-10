@@ -12,7 +12,7 @@ def auth():
 
 @app.get("/reg")
 def reg():
-    return "registr.html"
+    return render_template("registr.html")
 
 @app.post("/collect-registration")
 def collect_registration():
