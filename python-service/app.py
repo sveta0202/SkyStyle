@@ -2,9 +2,21 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-@app.get("/auth")
+@app.get("/")
 def index():
+    return render_template("index.html")
+
+@app.get("/auth")
+def auth():
     return render_template("login.html")
+
+@app.get("/landing")
+def landing():
+    return render_template("index.html")
+
+@app.get("/reg")
+def reg():
+    return ""
 
 @app.post("/collect-registration")
 def collect_registration():
