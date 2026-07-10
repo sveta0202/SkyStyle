@@ -14,9 +14,19 @@ def index():
 def auth():
     return render_template("login.html")
 
+@app.get("/home")
+def home():
+    """Личный кабинет — открывается после успешного входа."""
+    return render_template("home.html", weather=None, outfits=[])
+
 @app.get("/reg")
 def reg():
     return render_template("registr.html")
+
+@app.get("/profile")
+def profile():
+    """Страница профиля пользователя."""
+    return render_template("profile.html")
 
 @app.post("/collect-registration")
 def collect_registration():
