@@ -44,7 +44,9 @@
             </ul>
 
             <div class="hero-buttons">
-                <button class="btn primary" type="button">Начать</button>
+                <a href="{{ url_for('reg') }}">
+                    <button class="btn primary" type="button">Начать</button>
+                </a>
                 <button class="btn secondary" type="button">Подробнее</button>
             </div>
         </div>
@@ -77,19 +79,19 @@
 
     <div class="outfits-grid">
         <div class="outfit-card">
-            <div class="outfit-image"></div>
+            <img src="{{ url_for('static', filename='images/casual_look.png') }}" alt="Casual look">
             <h3>Casual look</h3>
             <p>Легкий образ для прогулки или повседневных дел.</p>
         </div>
 
         <div class="outfit-card">
-            <div class="outfit-image"></div>
+            <img src="{{ url_for('static', filename='images/office_look.png') }}" alt="Office look">
             <h3>Office look</h3>
             <p>Сдержанный образ для учебы, офиса или деловой встречи.</p>
         </div>
 
         <div class="outfit-card">
-            <div class="outfit-image"></div>
+            <img src="{{ url_for('static', filename='images/rainy_look.png') }}" alt="Rainy look">
             <h3>Rainy look</h3>
             <p>Практичный образ для прохладной и дождливой погоды.</p>
         </div>
