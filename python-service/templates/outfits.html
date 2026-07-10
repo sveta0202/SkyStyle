@@ -5,12 +5,11 @@
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>мои образы</title>
      <link rel="stylesheet" href="{{ url_for('static', filename='styles/outfits.css') }}">
-
 </head>
 <body>
 
 <header class="header">
-     <a href="home.html" class="logo">
+     <a href="{{ url_for('home') }}" class="logo">
           <div class="logo-icon">S</div>
           <span>Sky<span>Style</span></span>
      </a>
@@ -18,10 +17,9 @@
      <nav class="nav">
           <a href="{{ url_for('home') }}">главная</a>
           <a href="{{ url_for('profile') }}">профиль</a>
-          <a href="outfits.html" class="active">мои образы</a>
+          <a href="{{ url_for('outfits') }}" class="active">мои образы</a>
           <a href="{{ url_for('generate') }}">создать образ</a>
      </nav>
-
 </header>
 
 <main class="page">
@@ -34,7 +32,7 @@
 
           <article class="outfit-card">
                <div class="outfit-image">
-                    <img src="images/summer_look.png" alt="Летний образ для прогулки">
+                    <img src="{{ url_for('static', filename='images/summer_look.png') }}" alt="Летний образ для прогулки">
                </div>
 
                <div class="outfit-info">
@@ -44,7 +42,7 @@
 
           <article class="outfit-card">
                <div class="outfit-image">
-                    <img src="images/theater_look.png" alt="Вечерний образ для театра">
+                    <img src="{{ url_for('static', filename='images/theater_look.png') }}" alt="Вечерний образ для театра">
                </div>
 
                <div class="outfit-info">
