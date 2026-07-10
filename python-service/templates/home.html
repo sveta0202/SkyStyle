@@ -4,22 +4,22 @@
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>Главная | Sky Style</title>
-     <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}"></head>
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+</head>
 <body>
 
 <header class="header">
-     <a href="home.html" class="logo">
+     <a href="{{ url_for('home') }}" class="logo">
           <div class="logo-icon">S</div>
           <span>Sky<span>Style</span></span>
      </a>
 
      <nav class="nav">
-          <a href="home.html" class="active">главная</a>
-          <a href="profile.html">профиль</a>
-          <a href="outfits.html">мои образы</a>
-          <a href="generate.html">создать образ</a>
+          <a href="{{ url_for('home') }}" class="active">главная</a>
+          <a href="{{ url_for('profile') }}">профиль</a>
+          <a href="{{ url_for('outfits') }}">мои образы</a>
+          <a href="{{ url_for('generate') }}">создать образ</a>
      </nav>
-
 </header>
 
 <main class="page">
@@ -28,37 +28,71 @@
           <div class="weather-header">
                <div>
                     <p class="weather-label">Сегодня</p>
-                    <h2>Москва</h2>
+                    {% if weather %}
+                         <h2>{{ weather.city }}</h2>
+                    {% else %}
+                         <h2>Город не указан</h2>
+                    {% endif %}
                </div>
 
-               <div class="weather-icon">☁️</div>
-          </div>
-
-          <div class="temperature">+18°</div>
-
-          <div class="weather-tags">
-               <span>ощущается +16°</span>
-               <span>дождь 30%</span>
-          </div>
-
-          <div class="weather-details">
-               <div>
-                    <strong>10 км/ч</strong>
-                    <p>ветер</p>
-               </div>
-
-               <div>
-                    <strong>70%</strong>
-                    <p>влажность</p>
-               </div>
-
-               <div>
-                    <strong>1015</strong>
-                    <p>гПа</p>
+               <div class="weather-icon">
+                    {% if weather %}
+                         <img src="{{ weather.icon_url }}" alt="{{ weather.description }}" width="64" height="64">
+                    {% else %}
+                         ☁️
+                    {% endif %}
                </div>
           </div>
 
+          {% if weather %}
+               <div class="temperature">{{ weather.temp }}°</div>
 
+               <div class="weather-tags">
+                    <span>ощущается {{ weather.feels_like }}°</span>
+                    <span>{{ weather.description }}</span>
+               </div>
+
+               <div class="weather-details">
+                    <div>
+                         <strong>{{ weather.wind }} м/с</strong>
+                         <p>ветер</p>
+                    </div>
+
+                    <div>
+                         <strong>{{ weather.humidity }}%</strong>
+                         <p>влажность</p>
+                    </div>
+
+                    <div>
+                         <strong>{{ weather.country }}</strong>
+                         <p>страна</p>
+                    </div>
+               </div>
+          {% else %}
+               <div class="temperature">--°</div>
+
+               <div class="weather-tags">
+                    <span>ощущается --°</span>
+                    <span>нет данных</span>
+               </div>
+
+               <div class="weather-details">
+                    <div>
+                         <strong>--</strong>
+                         <p>ветер</p>
+                    </div>
+
+                    <div>
+                         <strong>--</strong>
+                         <p>влажность</p>
+                    </div>
+
+                    <div>
+                         <strong>--</strong>
+                         <p>страна</p>
+                    </div>
+               </div>
+          {% endif %}
      </aside>
 
      <section class="guide">
@@ -95,7 +129,7 @@
                     <div class="step-number">04</div>
                     <div>
                          <h3>Сохраняйте лучшие луки</h3>
-                         <p>Готовые образы можно хранить в разделе «Мои образы» и быстро возвращаться к ним позже.</p>
+                         <p>Готовые образы можно хранить в разделе «Мои образы» и быстро возвращать��я к ним позже.</p>
                     </div>
                </article>
           </div>
