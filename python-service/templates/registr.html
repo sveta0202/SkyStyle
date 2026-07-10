@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Регистрация</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/registr.css') }}">
+</head>
+<body>
+     <header class="logo">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" class="logoImage" alt="SkyStyle logo">
+          <span>SkyStyle</span>
+     </header>
+
+     <div class="main">
+          <h3 class="title">Регистрация</h3>
+
+          <div class="field-group">
+               <input type="text" placeholder="ваше имя">
+          </div>
+
+          <div class="field-group">
+               <input type="email" placeholder="email">
+          </div>
+
+          <div class="field-group">
+               <input type="password" placeholder="введите пароль">
+          </div>
+
+          <div class="field-group">
+               <input type="password" placeholder="повторите пароль">
+          </div>
+
+          <label class="checkbox">
+               <input type="checkbox">
+               <span> Я принимаю условия</span>
+          </label>
+
+          <button class="registrButton">зарегистрироваться</button>
+
+          <div class="login">
+               <p>Уже есть аккаунт? <a href="{{ url_for('auth') }}">Войти</a></p>
+          </div>
+     </div>
+</body>
+</html>

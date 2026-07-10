@@ -1,0 +1,180 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #F6F8FC 0%, #EAF1FF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: #1F2937;
+}
+
+.logo{
+    position: absolute;
+    top: 35px;
+    left: 45px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 28px;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+.logo span{
+    color: #1F2937;
+}
+
+.logoImage{
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.main{
+    width: 450px;
+    min-height: 500px;
+    background: #FFFFFF;
+    border-radius: 28px;
+    border: 1px solid #E5ECFF;
+    padding: 38px 34px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    box-shadow: 0 25px 60px rgba(91, 124, 250, 0.18);
+}
+
+.title{
+    margin: 0 0 30px;
+    color: #1F2937;
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.field-group{
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+input{
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #D8E2FF;
+    border-radius: 16px;
+    background-color: #F7F9FC;
+    color: #1F2937;
+    font-size: 16px;
+    outline: none;
+    transition: 0.25s;
+}
+
+input::placeholder{
+    color: #6B7280;
+}
+
+input:hover{
+    border-color: #8BB8FF;
+    background-color: #FFFFFF;
+}
+
+input:focus{
+    border-color: #5B7CFA;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(91, 124, 250, 0.14);
+}
+
+.registrButton{
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #5B7CFA, #8BB8FF);
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 16px 32px rgba(91, 124, 250, 0.28);
+}
+
+.registrButton:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(91, 124, 250, 0.35);
+}
+
+.registrButton:active{
+    transform: translateY(0);
+}
+
+@media (max-width: 520px){
+    .logo{
+        top: 24px;
+        left: 24px;
+        font-size: 24px;
+    }
+
+    .main{
+        width: calc(100% - 40px);
+        padding: 34px 24px;
+    }
+
+    .title{
+        font-size: 34px;
+    }
+}
+
+.login{
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin: 10px;
+}
+
+.login p{
+     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     color: #FFB648;
+     font-size: 15px;
+}
+
+
+.login p span{
+     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     color: #5B7CFA;
+     font-size: 20px;
+     font-weight: 600;
+}
+
+.checkbox{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    margin: 8px 0 20px;
+
+    color: #2D3A5F;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.checkbox input{
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: #5B7CFA;
+}
+
+.checkbox span{
+    color: #2D3A5F;
+}

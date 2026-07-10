@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sky Style</title>
-    <link rel="stylesheet" href="/static/styles/login.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
 </head>
 <body>
 
 <header class="hero">
     <div class="hero-gradient">
-
         <div class="circle circle1"></div>
         <div class="circle circle2"></div>
         <div class="circle circle3"></div>
@@ -22,30 +21,31 @@
 
     <div class="hero-content">
         <nav class="navbar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Sky Style logo">
+                <span>Sky Style</span>
+            </div>
 
-          <div class="logo">
-            <img src="/static/images/logo.png">
-            <span>Sky Style</span>
-          </div>
-
-          <button>войти</button>
+            <a href="{{ url_for('auth') }}">
+                <button type="button">войти</button>
+            </a>
         </nav>
 
         <div class="hero-text">
             <h1>Подбери образ под погоду</h1>
             <p>
-                Добавь свои вещи - и получай стильные образы из того, что уже есть в шкафу! 
+                Добавь свои вещи - и получай стильные образы из того, что уже есть в шкафу!
             </p>
 
             <ul class="ingo-btn">
-              <li>твой гардероб</li>
-              <li>твоя погода </li>
-              <li>твой стиль </li>
+                <li>твой гардероб</li>
+                <li>твоя погода</li>
+                <li>твой стиль</li>
             </ul>
 
             <div class="hero-buttons">
-                <button class="btn primary">Начать</button>
-                <button class="btn secondary">Подробнее</button>
+                <button class="btn primary" type="button">Начать</button>
+                <button class="btn secondary" type="button">Подробнее</button>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
     <div class="features-grid">
         <div class="feature-card">
             <div class="feature-icon"></div>
-            <h3>Определяем погоду за окном </h3>
+            <h3>Определяем погоду за окном</h3>
         </div>
 
         <div class="feature-card">
@@ -67,7 +67,7 @@
 
         <div class="feature-card">
             <div class="feature-icon"></div>
-            <h3>Подбираем тебе outfit </h3>
+            <h3>Подбираем тебе outfit</h3>
         </div>
     </div>
 </section>
@@ -95,7 +95,9 @@
         </div>
     </div>
 
-    <button class="register-btn">Зарегистрироваться</button>
+    <a href="{{ url_for('reg') }}">
+        <button class="register-btn" type="button">Зарегистрироваться</button>
+    </a>
 </section>
 
 <footer class="footer">
