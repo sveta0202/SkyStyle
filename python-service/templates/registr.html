@@ -16,31 +16,69 @@
           <h3 class="title">Регистрация</h3>
 
           <div class="field-group">
-               <input type="text" placeholder="ваше имя">
+               <input id="user_name" type="text" placeholder="ваше имя">
           </div>
 
           <div class="field-group">
-               <input type="email" placeholder="email">
+               <input id="email" type="email" placeholder="email">
           </div>
 
           <div class="field-group">
-               <input type="password" placeholder="введите пароль">
+               <input id="password" type="password" placeholder="введите пароль">
           </div>
 
           <div class="field-group">
-               <input type="password" placeholder="повторите пароль">
+               <input id="password2" type="password" placeholder="повторите пароль">
           </div>
 
           <label class="checkbox">
-               <input type="checkbox">
+               <input id="agree" type="checkbox">
                <span> Я принимаю условия</span>
           </label>
 
-          <button class="registrButton">зарегистрироваться</button>
+          <button class="registrButton" onclick="sendForm()">зарегистрироваться</button>
 
           <div class="login">
                <p>Уже есть аккаунт? <a href="{{ url_for('auth') }}">Войти</a></p>
           </div>
      </div>
+
+     <script>
+        async function sendForm() {
+            const user_name = document.getElementById("user_name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const password2 = document.getElementById("password2").value;
+            const agree = document.getElementById("agree").checked;
+
+            if (!agree) {
+                alert("Примите условия");
+                return;
+            }
+            if (password !== password2) {
+                alert("Пароли не совпадают");
+                return;
+            }
+
+            try {
+                const r = await fetch("/collect-registration", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        registration: { user_name, email, password }
+                    })
+                });
+                const data = await r.json();
+                if (data.ok) {
+                    alert("Зарегистрировано: " + data.user.user_name);
+                    window.location.href = "/auth";
+                } else {
+                    alert("Ошибка: " + data.error);
+                }
+            } catch (e) {
+                alert("Сетевая ошибка: " + e);
+            }
+        }
+     </script>
 </body>
 </html>
