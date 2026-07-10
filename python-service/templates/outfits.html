@@ -16,10 +16,10 @@
      </a>
 
      <nav class="nav">
-          <a href="{{ url_for('static', filename='styles/home.css') }}">главная</a>
-          <a href="{{ url_for('static', filename='styles/profile.css') }}">профиль</a>
+          <a href="{{ url_for('home') }}">главная</a>
+          <a href="{{ url_for('profile') }}">профиль</a>
           <a href="outfits.html" class="active">мои образы</a>
-          <a href="{{ url_for('static', filename='styles/generate.css') }}">создать образ</a>
+          <a href="{{ url_for('generate') }}">создать образ</a>
      </nav>
 
      <button class="login-btn">войти</button>
