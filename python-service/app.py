@@ -4,10 +4,6 @@ import requests
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
-
-# Адрес Rust-микросервиса. Внутри Docker-сети это имя сервиса "rust-service"
-# (задаётся в docker-compose.yml), локально — localhost. Берём из переменной
-# окружения RUST_SERVICE_URL, чтобы смена среды не требовала правки кода.
 RUST_SERVICE_URL = os.environ.get("RUST_SERVICE_URL", "http://rust-service:8080")
 
 @app.get("/")
@@ -24,7 +20,6 @@ def reg():
 
 @app.post("/collect-registration")
 def collect_registration():
-    """Проксирует регистрацию в Rust-микросервис (POST /auth/register)."""
     data = request.get_json(silent=True) or {}
     registration = data.get("registration", {})
 
@@ -58,7 +53,6 @@ def collect_registration():
 
 @app.post("/login")
 def login():
-    """Проксирует вход в Rust-микросервис (POST /auth/login)."""
     data = request.get_json(silent=True) or {}
 
     payload = {
@@ -92,6 +86,4 @@ def login():
 
 
 if __name__ == "__main__":
-    # 0.0.0.0 — слушать все интерфейсы (нужно внутри Docker-контейнера).
-    # Порт 8000 совпадает с EXPOSE в Dockerfile и mapping в docker-compose.yml.
     app.run(host="0.0.0.0", port=8000, debug=True)

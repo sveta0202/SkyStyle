@@ -1,0 +1,155 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px 40px;
+    background: linear-gradient(135deg, #5b7cfa, #8bb8ff);
+    color: white;
+}
+
+.topbar-left h1 {
+    margin: 0 0 8px;
+    font-size: 40px;
+}
+
+.topbar-left p {
+    margin: 0;
+    font-size: 18px;
+    opacity: 0.95;
+}
+
+.weather-box {
+    min-width: 340px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.weather-main img {
+    width: 70px;
+    height: 70px;
+}
+
+.weather-main h3 {
+    margin: 0 0 6px;
+    font-size: 24px;
+}
+
+.weather-main p {
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.action-card {
+    display: block;
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+    transition: 0.2s;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+}
+
+.action-card h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+
+.action-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.section-head h2 {
+    margin: 0 0 20px;
+    font-size: 30px;
+}
+
+.outfits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.outfit-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.outfit-card h3 {
+    margin: 0 0 12px;
+    font-size: 22px;
+}
+
+.outfit-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .topbar {
+        flex-direction: column;
+    }
+
+    .weather-box {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .actions,
+    .outfits-grid {
+        grid-template-columns: 1fr;
+    }
+}
