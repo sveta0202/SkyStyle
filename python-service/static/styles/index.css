@@ -182,13 +182,6 @@ button {
     transition: 0.25s;
 }
 
-.ingo-btn li:hover {
-    transform: translateY(-7px) scale(1.03);
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 26px 60px rgba(91, 124, 250, 0.2);
-    color: #4A67D8;
-}
-
 .hero-buttons {
     display: flex;
     gap: 18px;
