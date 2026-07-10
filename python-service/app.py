@@ -10,10 +10,6 @@ def index():
 def auth():
     return render_template("login.html")
 
-@app.get("/landing")
-def landing():
-    return render_template("index.html")
-
 @app.get("/reg")
 def reg():
     return ""
