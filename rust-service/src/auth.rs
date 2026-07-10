@@ -183,9 +183,7 @@ pub async fn login(
                 Json(serde_json::json!({ "error": "неверный пароль" }))).into_response()
         }
         Err(e) => {
-            error!(error = %e, "ошибка проверки пароля");
-            (StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": "ошибка сервера" }))).into_response()
+                Json(serde_json::json!({ "error": "ошибка сервера" })).into_response()
         }
     }
 }
