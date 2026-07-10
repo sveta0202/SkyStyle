@@ -1,35 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>вход</title>
-     <link rel="stylesheet" href="styles/login.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
 </head>
 <body>
-     <header class="logo">
-          <img src="images/logo.png" class="logoImage">
-          <span>SkyStyle</span>
-     </header>
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="logoImage" alt="SkyStyle logo">
+        <span>SkyStyle</span>
+    </header>
 
-     <div class="main">
-          <h3 class="title">вход в аккаунт</h3>
+    <div class="main">
+        <h3 class="title">вход в аккаунт</h3>
 
-          <div class="field-group">
-               <input type="text" placeholder="ваше имя">
-          </div>
+        <div class="field-group">
+            <input id="user_name" type="text" placeholder="ваше имя">
+        </div>
 
-          <div class="field-group">
-               <input type="email" placeholder="email">
-          </div>
+        <div class="field-group">
+            <input id="email" type="email" placeholder="email">
+        </div>
 
-          <div class="field-group">
-               <input type="password" placeholder="введите пароль">
-          </div>
+        <div class="field-group">
+            <input id="password" type="password" placeholder="введите пароль">
+        </div>
 
+        <button class="loginButton" onclick="sendForm()">войти</button>
+    </div>
 
-               <button class="loginButton">войти</button>
-     </div>
-
+    <script>
+        async function sendForm() {
+            const r = await fetch("/collect-registration", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    registration: {
+                        user_name: document.getElementById("user_name").value,
+                        email: document.getElementById("email").value,
+                        password: document.getElementById("password").value
+                    }
+                })
+            });
+            const data = await r.json();
+            alert("Отправлено: " + data.user.user_name);
+        }
+    </script>
 </body>
 </html>
