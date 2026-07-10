@@ -23,6 +23,14 @@ def home():
 def reg():
     return render_template("registr.html")
 
+@app.get("/outfits")
+def outfits():
+    return render_template("outfits.html")
+
+@app.get("/generate")
+def generate():
+    return render_template("generate.html")
+
 @app.get("/profile")
 def profile():
     """Страница профиля пользователя."""
