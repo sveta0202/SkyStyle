@@ -11,20 +11,17 @@ use uuid::Uuid;
 
 use crate::DbPool;
 
-/// Тело запроса на добавление/удаление вещей гардероба.
 #[derive(Debug, Deserialize)]
 pub struct WardrobeInput {
     pub user_id: Uuid,
     pub items: Vec<String>,
 }
 
-/// Ответ со списком вещей. Избегаем возврата "голого" массива.
 #[derive(Debug, Serialize)]
 pub struct WardrobeList {
     pub items: Vec<String>,
 }
 
-/// Собирает роутер гардероба: POST — добавить, GET — список, DELETE — удалить.
 pub fn wardrobe_routes() -> Router {
     Router::new().route(
         "/wardrobe",
@@ -32,7 +29,6 @@ pub fn wardrobe_routes() -> Router {
     )
 }
 
-/// POST /wardrobe — добавляет вещи (batch). Дубликаты игнорируются (ON CONFLICT).
 pub async fn add_items(
     Extension(pool): Extension<DbPool>,
     Json(input): Json<WardrobeInput>,
@@ -70,7 +66,6 @@ pub async fn add_items(
     (StatusCode::OK, Json(serde_json::json!({ "ok": true, "added": added }))).into_response()
 }
 
-/// GET /wardrobe?user_id=<UUID> — возвращает список вещей пользователя.
 pub async fn list_items(
     Extension(pool): Extension<DbPool>,
     Query(params): Query<WardrobeQuery>,
@@ -88,7 +83,6 @@ pub async fn list_items(
     }
 }
 
-/// DELETE /wardrobe — удаляет перечисленные вещи пользователя.
 pub async fn remove_items(
     Extension(pool): Extension<DbPool>,
     Json(input): Json<WardrobeInput>,
@@ -126,7 +120,6 @@ pub async fn remove_items(
     }
 }
 
-/// Загружает вещи гардероба пользователя. Переиспользуется модулем подбора образов.
 pub async fn load_wardrobe(pool: &DbPool, user_id: Uuid) -> Result<Vec<String>, sqlx::Error> {
     let rows = sqlx::query("SELECT item FROM wardrobe WHERE user_id = $1 ORDER BY item")
         .bind(user_id)
@@ -138,7 +131,6 @@ pub async fn load_wardrobe(pool: &DbPool, user_id: Uuid) -> Result<Vec<String>, 
         .collect())
 }
 
-/// Параметры GET-запроса списка гардероба.
 #[derive(Debug, Deserialize)]
 pub struct WardrobeQuery {
     pub user_id: Uuid,
