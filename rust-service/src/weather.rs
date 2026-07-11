@@ -9,7 +9,6 @@ use serde_json::json;
 
 use crate::AppConfig;
 
-/// Нормализованная погода, которую отдаём клиенту и используем в подборе образов.
 #[derive(Debug, Clone, Serialize)]
 pub struct WeatherInfo {
     pub city: String,
@@ -21,7 +20,6 @@ pub struct WeatherInfo {
     pub icon: String,
 }
 
-/// Ответ OpenWeatherMap (берём только нужные поля).
 #[derive(Debug, Deserialize)]
 struct OwmMain {
     temp: f64,
@@ -45,7 +43,6 @@ struct OwmResponse {
     name: String,
 }
 
-/// Ошибки получения погоды (текст + код для маппинга в HTTP-статус).
 #[derive(Debug)]
 pub enum WeatherError {
     Request(reqwest::Error),
@@ -63,7 +60,6 @@ impl std::fmt::Display for WeatherError {
     }
 }
 
-/// GET /weather?city=<город> — проксирует запрос к OpenWeatherMap.
 pub async fn get_weather(
     Extension(cfg): Extension<AppConfig>,
     Query(q): Query<WeatherQuery>,
@@ -88,7 +84,6 @@ pub async fn get_weather(
     }
 }
 
-/// Запрашивает погоду через OpenWeatherMap и нормализует ответ.
 pub async fn fetch_weather(
     client: &reqwest::Client,
     key: &str,
@@ -137,7 +132,6 @@ pub async fn fetch_weather(
     })
 }
 
-/// Собирает роутер погоды.
 pub fn weather_routes() -> Router {
     Router::new().route("/weather", axum::routing::get(get_weather))
 }
