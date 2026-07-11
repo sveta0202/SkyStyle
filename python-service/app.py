@@ -57,7 +57,7 @@ def collect_registration():
         resp = requests.post(
             f"{RUST_SERVICE_URL}/auth/register",
             json=payload,
-            timeout=10,
+            timeout=15,
         )
     except requests.RequestException as e:
         return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
@@ -96,7 +96,7 @@ def login():
         resp = requests.post(
             f"{RUST_SERVICE_URL}/auth/login",
             json=payload,
-            timeout=10,
+            timeout=15,
         )
     except requests.RequestException as e:
         return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
@@ -198,5 +198,11 @@ def generate_outfit():
     return jsonify(body), status
 
 
+@app.get("/health")
+def health():
+    return jsonify({"ok": True}), 200
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)

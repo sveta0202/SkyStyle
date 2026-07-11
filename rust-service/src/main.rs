@@ -143,7 +143,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL должен быть задан в .env или переменных окружения");
+        .expect("DATABASE_URL должен быть задан в переменных окружения");
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
@@ -164,9 +164,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(Extension(pool))
         .layer(Extension(config));
 
-    info!("сервер слушает на http://0.0.0.0:8080");
+    let port: u16 = env::var("PORT")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(8080);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+    let addr = format!("0.0.0.0:{port}");
+    info!("сервер слушает на http://{addr}");
+
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
