@@ -274,6 +274,7 @@ pub async fn generate(
     let body = json!({
         "model": cfg.llm_model,
         "temperature": 0.7,
+        "max_tokens": 800,
         "messages": [
             { "role": "system", "content": system },
             { "role": "user", "content": user }
@@ -346,7 +347,7 @@ pub async fn generate(
 
     if let Err(e) = sqlx::query_as::<_, SavedOutfit>(
         "INSERT INTO outfits (user_id, title, description) VALUES ($1, $2, $3) \
-         RETURNING id, user_id, title, description, created_at",
+RETURNING id, user_id, title, description, created_at",
     )
     .bind(input.user_id)
     .bind(&db_title)
@@ -396,7 +397,7 @@ pub async fn list_outfits(
 ) -> impl IntoResponse {
     match sqlx::query_as::<_, SavedOutfit>(
         "SELECT id, user_id, title, description, created_at \
-         FROM outfits WHERE user_id = $1 ORDER BY created_at DESC",
+FROM outfits WHERE user_id = $1 ORDER BY created_at DESC",
     )
     .bind(q.user_id)
     .fetch_all(&pool)
