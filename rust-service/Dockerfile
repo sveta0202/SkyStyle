@@ -20,13 +20,12 @@
 #EXPOSE 8080
 #
 #CMD ["./rust-service"]
-
 FROM rust:1.79 as builder
 
 WORKDIR /app
 
-COPY rust-service/Cargo.toml rust-service/Cargo.lock ./
-COPY rust-service/src ./src
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
 
 RUN cargo build --release
 
