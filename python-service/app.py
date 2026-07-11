@@ -65,11 +65,13 @@ def collect_registration():
     try:
         body = resp.json()
     except ValueError:
-        body = {"error": resp.text}
+        body = {"ok": False, "error": resp.text}
 
     if resp.status_code >= 400:
-        err = body.get("error", "ошибка регистрации")
-        return jsonify({"ok": False, "error": err}), resp.status_code
+        return jsonify({
+            "ok": False,
+            "error": body.get("error", "ошибка регистрации"),
+        }), resp.status_code
 
     return jsonify({
         "ok": True,
@@ -102,11 +104,13 @@ def login():
     try:
         body = resp.json()
     except ValueError:
-        body = {"error": resp.text}
+        body = {"ok": False, "error": resp.text}
 
     if resp.status_code >= 400:
-        err = body.get("error", "ошибка входа")
-        return jsonify({"ok": False, "error": err}), resp.status_code
+        return jsonify({
+            "ok": False,
+            "error": body.get("error", "ошибка входа"),
+        }), resp.status_code
 
     return jsonify({
         "ok": True,
@@ -118,60 +122,80 @@ def login():
     })
 
 
-def _proxy(method, path, *, json_body=None, params=None):
+def _proxy(method, path, *, json_body=None, params=None, timeout=30):
     try:
         resp = requests.request(
             method,
             f"{RUST_SERVICE_URL}{path}",
             json=json_body,
             params=params,
-            timeout=30,
+            timeout=timeout,
         )
     except requests.RequestException as e:
-        return jsonify({"ok": False, "error": f"нет связи с бэкендом: {e}"}), 502
+        return {"ok": False, "error": f"нет связи с бэкендом: {e}"}, 502
 
     try:
         payload = resp.json()
     except ValueError:
-        payload = {"error": resp.text}
+        payload = {"ok": False, "error": resp.text}
 
-    return jsonify(payload), resp.status_code
+    return payload, resp.status_code
 
 
 @app.get("/wardrobe")
 def wardrobe_get():
     user_id = request.args.get("user_id", "").strip()
-    return _proxy("GET", "/wardrobe", params={"user_id": user_id})
+    payload, status = _proxy("GET", "/wardrobe", params={"user_id": user_id})
+    return jsonify(payload), status
 
 
 @app.post("/wardrobe")
 def wardrobe_post():
     data = request.get_json(silent=True) or {}
-    return _proxy("POST", "/wardrobe", json_body=data)
+    payload, status = _proxy("POST", "/wardrobe", json_body=data)
+    return jsonify(payload), status
 
 
 @app.delete("/wardrobe")
 def wardrobe_delete():
     data = request.get_json(silent=True) or {}
-    return _proxy("DELETE", "/wardrobe", json_body=data)
+    payload, status = _proxy("DELETE", "/wardrobe", json_body=data)
+    return jsonify(payload), status
 
 
 @app.get("/weather")
 def weather():
     city = request.args.get("city", "").strip()
-    return _proxy("GET", "/weather", params={"city": city})
+    payload, status = _proxy("GET", "/weather", params={"city": city})
+    return jsonify(payload), status
 
 
 @app.get("/outfits")
 def outfits_api():
     user_id = request.args.get("user_id", "").strip()
-    return _proxy("GET", "/outfits", params={"user_id": user_id})
+    payload, status = _proxy("GET", "/outfits", params={"user_id": user_id})
+    return jsonify(payload), status
 
 
 @app.post("/generate-outfit")
 def generate_outfit():
     data = request.get_json(silent=True) or {}
-    return _proxy("POST", "/outfits/generate", json_body=data)
+
+    payload = {
+        "user_id": data.get("user_id"),
+        "city": (data.get("city") or "").strip(),
+        "goal": (data.get("goal") or "").strip(),
+        "tone": (data.get("tone") or "").strip(),
+    }
+
+    if not payload["user_id"]:
+        return jsonify({"ok": False, "error": "user_id обязателен"}), 400
+
+    if not payload["city"]:
+        return jsonify({"ok": False, "error": "city обязателен"}), 400
+
+    body, status = _proxy("POST", "/outfits/generate", json_body=payload, timeout=90)
+    return jsonify(body), status
 
 
 if __name__ == "__main__":

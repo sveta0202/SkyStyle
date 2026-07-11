@@ -1,5 +1,4 @@
 services:
-  # ─── PostgreSQL ───
   postgres:
     image: postgres:16
     environment:
@@ -11,37 +10,34 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      # Ждём готовности БД, чтобы Rust не упал при старте
       test: ["CMD-SHELL", "pg_isready -U postgres -d sky_style"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  # ─── Rust-микросервис (бэкенд, работа с БД) ───
   rust-service:
     build: ./rust-service
     depends_on:
       postgres:
-        condition: service_healthy   # запускаем только когда БД готова
+        condition: service_healthy
     environment:
-      # Внутри сети Docker хост — это имя сервиса "postgres"
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/sky_style
-      RUST_LOG: info
-      # Ключи внешних API (интерполируются из корневого .env)
-      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
-      LLM_API_KEY: ${LLM_API_KEY}
+      RUST_LOG: ${RUST_LOG:-info}
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
       LLM_BASE_URL: ${LLM_BASE_URL}
+      LLM_KEY: ${LLM_KEY}
       LLM_MODEL: ${LLM_MODEL}
+      IMAGE_BASE_URL: ${IMAGE_BASE_URL}
+      IMAGE_API_KEY: ${IMAGE_API_KEY}
+      IMAGE_MODEL: ${IMAGE_MODEL}
     ports:
       - "8080:8080"
 
-  # ─── Python/Flask (шлюз, фронтенд) ───
   python-service:
     build: ./python-service
     depends_on:
       - rust-service
     environment:
-      # Внутри сети Docker хост — это имя сервиса "rust-service"
       RUST_SERVICE_URL: http://rust-service:8080
     ports:
       - "8000:8000"

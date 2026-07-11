@@ -23,7 +23,6 @@
 </header>
 
 <main class="page">
-
      <section class="generator-panel">
           <p class="eyebrow">новый лук</p>
           <h1>Создать образ</h1>
@@ -31,26 +30,26 @@
           <div class="choice-block">
                <h2>Цель аутфита</h2>
                <div class="choice-grid" id="goalButtons">
-                    <button class="choice-btn active" data-value="на праздник">на праздник</button>
-                    <button class="choice-btn" data-value="на улицу">на улицу</button>
-                    <button class="choice-btn" data-value="домашний">домашний</button>
-                    <button class="choice-btn" data-value="на учебу">на учебу</button>
-                    <button class="choice-btn" data-value="в офис">в офис</button>
-                    <button class="choice-btn" data-value="в театр">в театр</button>
+                    <button type="button" class="choice-btn active" data-value="праздник">на праздник</button>
+                    <button type="button" class="choice-btn" data-value="улица">на улицу</button>
+                    <button type="button" class="choice-btn" data-value="дом">домашний</button>
+                    <button type="button" class="choice-btn" data-value="учеба">на учебу</button>
+                    <button type="button" class="choice-btn" data-value="офис">в офис</button>
+                    <button type="button" class="choice-btn" data-value="театр">в театр</button>
                </div>
           </div>
 
           <div class="choice-block">
                <h2>Тона</h2>
-               <div class="choice-grid tones" id="toneButtons">
-                    <button class="choice-btn active" data-value="теплые">теплые</button>
-                    <button class="choice-btn" data-value="холодные">холодные</button>
-                    <button class="choice-btn" data-value="яркие">яркие</button>
-                    <button class="choice-btn" data-value="смешанные">смешанные</button>
+               <div class="choice-grid" id="toneButtons">
+                    <button type="button" class="choice-btn active" data-value="теплые">теплые</button>
+                    <button type="button" class="choice-btn" data-value="холодные">холодные</button>
+                    <button type="button" class="choice-btn" data-value="яркие">яркие</button>
+                    <button type="button" class="choice-btn" data-value="смешанные">смешанные</button>
                </div>
           </div>
 
-          <button class="generate-btn" id="generateBtn">сгенерировать образы</button>
+          <button type="button" class="generate-btn" id="generateBtn">сгенерировать образы</button>
      </section>
 
      <section class="result-panel">
@@ -69,71 +68,94 @@
                </div>
           </div>
      </section>
-
 </main>
 
 <script>
-     let selectedGoal = "на праздник";
+     let selectedGoal = "праздник";
      let selectedTone = "теплые";
 
-     function bindToggle(groupId, setter) {
+     function setupToggle(groupId, onChange) {
           const group = document.getElementById(groupId);
           const buttons = group.querySelectorAll(".choice-btn");
 
-          buttons.forEach((btn) => {
-               btn.addEventListener("click", () => {
-                    buttons.forEach((b) => b.classList.remove("active"));
-                    btn.classList.add("active");
-                    setter(btn.dataset.value);
+          buttons.forEach((button) => {
+               button.addEventListener("click", () => {
+                    buttons.forEach((btn) => btn.classList.remove("active"));
+                    button.classList.add("active");
+                    onChange(button.dataset.value);
                });
           });
      }
 
-     bindToggle("goalButtons", (value) => selectedGoal = value);
-     bindToggle("toneButtons", (value) => selectedTone = value);
+     setupToggle("goalButtons", (value) => selectedGoal = value);
+     setupToggle("toneButtons", (value) => selectedTone = value);
 
      document.getElementById("generateBtn").addEventListener("click", async () => {
           const resultGrid = document.getElementById("resultGrid");
           const statusPill = document.getElementById("statusPill");
 
+          const userId = localStorage.getItem("user_id");
+          const city = localStorage.getItem("city") || "Innopolis";
+
+          if (!userId) {
+               statusPill.textContent = "ошибка";
+               resultGrid.innerHTML = `
+                    <div class="empty-result">
+                         <div class="empty-icon">⚠️</div>
+                         <h3>Пользователь не найден</h3>
+                         <p>Сначала войдите в аккаунт.</p>
+                    </div>
+               `;
+               return;
+          }
+
           statusPill.textContent = "генерация...";
           resultGrid.innerHTML = `
                <div class="empty-result">
                     <div class="empty-icon">⏳</div>
-                    <h3>Генерируем образ</h3>
-                    <p>Подбираем стиль и создаем изображение.</p>
+                    <h3>Создаем образ</h3>
+                    <p>Учитываем гардероб, погоду и выбранные параметры.</p>
                </div>
           `;
 
           try {
-               const response = await fetch("/api/generate-outfit-image", {
+               const response = await fetch("/generate-outfit", {
                     method: "POST",
-                    headers: {
-                         "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
+                         user_id: userId,
+                         city,
                          goal: selectedGoal,
                          tone: selectedTone
                     })
                });
 
-               const data = await response.json();
+               const contentType = response.headers.get("content-type") || "";
+               const rawText = await response.text();
 
-               if (!data.ok) {
-                    statusPill.textContent = "ошибка";
-                    resultGrid.innerHTML = `
-                         <div class="empty-result">
-                              <div class="empty-icon">⚠️</div>
-                              <h3>Не удалось создать образ</h3>
-                              <p>${data.error || "Попробуйте еще раз."}</p>
-                         </div>
-                    `;
-                    return;
+               if (!contentType.includes("application/json")) {
+                    console.error("Не JSON-ответ:", rawText);
+                    throw new Error("Сервер вернул HTML вместо JSON");
                }
 
-               statusPill.textContent = `${selectedGoal} · ${selectedTone}`;
+               const data = JSON.parse(rawText);
 
-               const listHtml = data.items.map(item => `<li>${item}</li>`).join("");
+               if (!response.ok || data.ok === false) {
+                    throw new Error(data.error || "Ошибка генерации");
+               }
+
+               const itemsHtml = (data.items || [])
+                    .map(item => `<li>${item}</li>`)
+                    .join("");
+
+               const imageHtml = data.image_base64
+                    ? `<div style="border-radius:24px; overflow:hidden; margin-bottom:18px;">
+                           <img src="data:image/png;base64,${data.image_base64}" alt="Сгенерированный образ" style="width:100%; display:block;">
+                       </div>`
+                    : "";
+
+               statusPill.textContent =
+                    `${Math.round(data.weather?.temp ?? 0)}° · ${data.weather?.description || "без данных"}`;
 
                resultGrid.innerHTML = `
                     <article class="outfit-result" style="grid-column: 1 / -1;">
@@ -141,26 +163,47 @@
                               <span class="result-tag">${selectedTone}</span>
                               <span class="save-mark">★</span>
                          </div>
-                         <h3>${data.title}</h3>
-                         <div style="border-radius: 24px; overflow: hidden; margin-bottom: 18px;">
-                              <img
-                                   src="data:image/png;base64,${data.image_base64}"
-                                   alt="Сгенерированный образ"
-                                   style="width:100%; display:block;"
-                              >
-                         </div>
+
+                         <h3>${data.title || "Новый образ"}</h3>
+                         ${imageHtml}
+
                          <ul class="outfit-list">
-                              ${listHtml}
+                              ${itemsHtml || "<li>Нет списка вещей</li>"}
                          </ul>
+
+                         ${data.note ? `
+                              <p style="margin-top:16px; color:#637399; font-size:18px; line-height:1.55;">
+                                   ${data.note}
+                              </p>
+                         ` : ""}
+
+                         <div style="margin-top:22px; padding:18px; border-radius:22px; background: rgba(234,241,255,.85);">
+                              <strong style="display:block; margin-bottom:8px;">Погода</strong>
+                              <div style="color:#4C5E8A; line-height:1.6;">
+                                   Город: ${data.weather?.city || city}<br>
+                                   Температура: ${data.weather?.temp ?? "—"}°C<br>
+                                   Ощущается как: ${data.weather?.feels_like ?? "—"}°C<br>
+                                   Условия: ${data.weather?.description || "—"}<br>
+                                   Влажность: ${data.weather?.humidity ?? "—"}%<br>
+                                   Ветер: ${data.weather?.wind ?? "—"} м/с
+                              </div>
+                         </div>
+
+                         <div style="margin-top:18px; padding:18px; border-radius:22px; background: rgba(255,255,255,.7); border:1px solid rgba(139,184,255,.34);">
+                              <strong style="display:block; margin-bottom:8px;">Учтённый гардероб</strong>
+                              <div style="color:#4C5E8A; line-height:1.6;">
+                                   ${(data.wardrobe || []).length ? data.wardrobe.join(", ") : "Гардероб пока пуст"}
+                              </div>
+                         </div>
                     </article>
                `;
-          } catch (e) {
+          } catch (error) {
                statusPill.textContent = "ошибка";
                resultGrid.innerHTML = `
                     <div class="empty-result">
                          <div class="empty-icon">⚠️</div>
-                         <h3>Ошибка соединения</h3>
-                         <p>${e.message}</p>
+                         <h3>Не удалось сгенерировать образ</h3>
+                         <p>${error.message}</p>
                     </div>
                `;
           }

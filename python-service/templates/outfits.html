@@ -3,7 +3,7 @@
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>мои образы</title>
+     <title>Мои образы | Sky Style</title>
      <link rel="stylesheet" href="{{ url_for('static', filename='styles/outfits.css') }}">
 </head>
 <body>
@@ -23,36 +23,115 @@
 </header>
 
 <main class="page">
-
      <section class="page-title">
-          <h1>Ваша библиотека</h1>
+          <p class="eyebrow">библиотека</p>
+          <h1>Мои аутфиты</h1>
+          <p>Здесь хранится история всех сгенерированных образов.</p>
      </section>
 
-     <section class="outfits-grid">
-
-          <article class="outfit-card">
-               <div class="outfit-image">
-                    <img src="{{ url_for('static', filename='images/summer_look.png') }}" alt="Летний образ для прогулки">
-               </div>
-
-               <div class="outfit-info">
-                    <h3>Летний образ</h3>
-               </div>
-          </article>
-
-          <article class="outfit-card">
-               <div class="outfit-image">
-                    <img src="{{ url_for('static', filename='images/theater_look.png') }}" alt="Вечерний образ для театра">
-               </div>
-
-               <div class="outfit-info">
-                    <h3>Вечерний образ</h3>
-               </div>
-          </article>
-
+     <section class="outfits-grid" id="outfitsGrid">
+          <div class="empty-result">
+               <div class="empty-icon">✨</div>
+               <h3>Загрузка истории</h3>
+               <p>Сейчас подгружаем ваши образы.</p>
+          </div>
      </section>
-
 </main>
+
+<script>
+     async function loadOutfits() {
+          const grid = document.getElementById("outfitsGrid");
+          const userId = localStorage.getItem("user_id");
+
+          if (!userId) {
+               grid.innerHTML = `
+                    <div class="empty-result">
+                         <div class="empty-icon">⚠️</div>
+                         <h3>Пользователь не найден</h3>
+                         <p>Сначала войдите в аккаунт.</p>
+                    </div>
+               `;
+               return;
+          }
+
+          try {
+               const response = await fetch(`/outfits?user_id=${encodeURIComponent(userId)}`);
+               const contentType = response.headers.get("content-type") || "";
+               const rawText = await response.text();
+
+               if (!contentType.includes("application/json")) {
+                    throw new Error("Сервер вернул HTML вместо JSON");
+               }
+
+               const data = JSON.parse(rawText);
+
+               if (!response.ok || data.ok === false) {
+                    throw new Error(data.error || "Не удалось загрузить историю");
+               }
+
+               renderOutfits(data.outfits || []);
+          } catch (error) {
+               grid.innerHTML = `
+                    <div class="empty-result">
+                         <div class="empty-icon">⚠️</div>
+                         <h3>Ошибка загрузки</h3>
+                         <p>${error.message}</p>
+                    </div>
+               `;
+          }
+     }
+
+     function renderOutfits(outfits) {
+          const grid = document.getElementById("outfitsGrid");
+
+          if (!outfits.length) {
+               grid.innerHTML = `
+                    <div class="empty-result">
+                         <div class="empty-icon">✨</div>
+                         <h3>История пока пуста</h3>
+                         <p>Создайте первый образ на странице генерации.</p>
+                    </div>
+               `;
+               return;
+          }
+
+          grid.innerHTML = outfits.map(outfit => `
+               <article class="outfit-card">
+                    <div class="outfit-info">
+                         <div class="outfit-meta">
+                              <span class="outfit-date">${formatDate(outfit.created_at)}</span>
+                         </div>
+                         <h3>${escapeHtml(outfit.title)}</h3>
+                         <p>${escapeHtml(outfit.description)}</p>
+                    </div>
+               </article>
+          `).join("");
+     }
+
+     function formatDate(value) {
+          if (!value) return "без даты";
+
+          const date = new Date(value);
+          if (Number.isNaN(date.getTime())) return "без даты";
+
+          return date.toLocaleDateString("ru-RU", {
+               day: "2-digit",
+               month: "long",
+               year: "numeric"
+          });
+     }
+
+     function escapeHtml(value) {
+          return String(value ?? "")
+               .replaceAll("&", "&amp;")
+               .replaceAll("<", "&lt;")
+               .replaceAll(">", "&gt;")
+               .replaceAll('"', "&quot;")
+               .replaceAll("'", "&#039;");
+     }
+
+     loadOutfits();
+</script>
 
 </body>
 </html>
